@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import lopez.pedro.doglist.databinding.ActivityMainBinding
+import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -41,8 +42,14 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener,
         return Retrofit.Builder()
             .baseUrl("https://dog.ceo/api/breed/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(getClient())
             .build()
     }
+    private fun getClient():OkHttpClient =
+        OkHttpClient.Builder()
+            .addInterceptor(HeaderInterceptor())
+            .build()
+
 
     private fun searchByName(query:String){
         CoroutineScope(Dispatchers.IO).launch {
